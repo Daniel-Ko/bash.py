@@ -1,4 +1,6 @@
 import argparse
+import os
+import math 
 
 parser = argparse.ArgumentParser()
 
@@ -20,6 +22,9 @@ if args.show_fends: # -FE
         with open(filename, "r") as f:
             longest_line_len = max( \
                 len(max(f, key=len)), longest_line_len)
+    # If lines are so long they wrap, just use end of terminal line as max size
+    terminal_size =  os.get_terminal_size().columns
+    longest_line_len = min(longest_line_len, terminal_size) 
 
 if args.number: # -n
     line_num = 1
@@ -50,7 +55,14 @@ for filename in args.filename:
                 line_num += 1
             
             if args.show_ends or args.show_fends: # -E and -FE
-                line_end_text = '%{}s'.format(longest_line_len - len(line)) % ('$') # Make sure each line has all the same columns as every other
+                relative_line_len = longest_line_len
+
+                if len(line) > terminal_size: # If line is long enough to wrap, add $ at the terminal width marker after it all
+                    next_terminal_width_after_spanning_line =  math.ceil(len(line) / terminal_size)    \
+                        * terminal_size    
+                    relative_line_len = next_terminal_width_after_spanning_line
+                
+                line_end_text = '%{}s'.format(relative_line_len - len(line)) % ('$') # Make sure each line has all the same columns as every other
                 
             print(line_start_text + line + line_end_text)
 
