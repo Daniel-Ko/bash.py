@@ -62,7 +62,7 @@ for filename in args.filename:
                         * terminal_size    
                     relative_line_len = next_terminal_width_after_spanning_line
                 
-                line_end_text = '%{}s'.format(relative_line_len - len(line)) % ('$') # Make sure each line has all the same columns as every other
+                line_end_text = '%{}s'.format(relative_line_len - len(line)) % ('$') # Make sure all $ are aligned
                 
             print(line_start_text + line + line_end_text)
 
